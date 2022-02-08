@@ -1,0 +1,4 @@
+#!! Kubeadm does not deploy kubelet, you must always install it manually
+
+ps -aux | grep kubelet
+
