@@ -1,0 +1,19 @@
+kubectl get nodes
+
+### Node Controller
+# Node monitor period = 5s --- every 5 seconds checks if nodes are ok
+# Node Monitor Grace Period = 40s --- if node is not available for 40 seconds it marks it unreachable
+# POD Eviction Timount = 5m --- waits for 5 minutes, if node is not up, it evicts pods to healthy node
+
+### Replication Controller
+
+kubectl get pods -n kube-system
+> kube-controller-manager-master
+
+# Options for kube-controller manager
+
+cat /etc/kubernetes/manifests/kube-controller-manager.yaml
+# OR 
+cat /etc/systemd/system/kube-controller-manager.service
+
+ps -aux | grep kube-controller-manager
