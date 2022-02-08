@@ -1,0 +1,7 @@
+# Install it as binary
+
+# View options
+
+#kubeadm
+
+cat /etc/kubernetes/manifest/kube-scheduler.yaml
