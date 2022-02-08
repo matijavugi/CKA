@@ -1,0 +1,13 @@
+pod-definition.yml
+
+apiVersion: v1      // version of k8s
+kind: Pod           // depoyment, Pod, service, ...
+metadata:
+  name: myapp-pod
+  labels:           // dictionary
+    app: myapp
+
+spec:
+  containers:
+    - name: nginx-container
+      image: nginx
