@@ -1,0 +1,14 @@
+## View kube-api server options
+
+# kubeadm
+kubectl get podes -n kube-system
+> kube-apiserver-master
+
+# or
+cat /etc/kubernetes/manifests/kube-apiserver.yaml
+
+# non-kubeadm
+cat /etc/systemd/system/kube-apiserver.service
+
+# or 
+ps -aux |grep kube-apiserver
