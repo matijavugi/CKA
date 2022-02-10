@@ -1,0 +1,68 @@
+# with replicaset you can cover already existing pods with matchLabels definition
+# notice selector line in ReplicaSet
+
+RepplicationControler:
+
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: myapp-rc
+  labels: 
+    app: myapp
+    type: front-end
+
+spec:
+  template:
+    metadata:
+      name: myapp-pod
+      labels:
+        app: myapp
+        type: front-ent
+    spec:
+      containers:
+      - name: nginx-container
+        image: nginx
+  replicas: 3
+  
+  
+  ReplicaSet:
+  
+  apiVersion: v1
+kind: ReplicaSet
+metadata:
+  name: myapp-replicaset
+  labels: 
+    app: myapp
+    type: front-end
+
+spec:
+  template:
+    metadata:
+      name: myapp-pod
+      labels:
+        app: myapp
+        type: front-ent
+    spec:
+      containers:
+      - name: nginx-container
+        image: nginx
+  replicas: 3
+  selector:
+    matchLabels:
+      type: front-end
+      
+kubectl get replicationcontroller
+kubectl get replicaset
+
+
+# Scale with ReplicaSet
+- update definition file
+
+kubectl replace -f replicaset-definition.yml
+#or 
+kubectl --scale --replicas=6 -f replicaset-definition.yml
+#or 
+kubectl --scale --replicas=6 replicaset myapp-replicaset (this does not change file)
+
+
+
