@@ -1,0 +1,24 @@
+# NodePort Service
+- 3 ports involved
+	- TargetPort - port on the POD
+	- Port	     - port on the Service (Service has it's own IP address)
+	- NodePort   - port on the node
+  
+# How to create Service
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: myapp-service
+  labels:
+    type: front-end
+
+spec:
+  type: NodePort
+  ports:
+    - targetPort: 80
+      port: 80
+      nodePort: 30008
+  selector:
+    app: myapp
+    type: front-end
