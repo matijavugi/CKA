@@ -1,0 +1,20 @@
+# ClusterIP Service
+
+- type: ClusterIP is default, doesn't need to be mentioned
+
+- targetPort - port where the backend is exposed
+- Port - port where the service is exposed
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: back-end
+
+spec:
+  type: ClusterIP
+  ports:
+    - targetPort: 80
+      port: 80
+  selector:
+    app: myapp
+    type: back-end
