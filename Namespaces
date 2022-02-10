@@ -1,0 +1,30 @@
+kubectl get pods --namespace=kube-system
+
+kubectl get pods --all-namespaces
+
+# Create namespace
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: dev
+  
+# OR
+
+kubectl create namespace dev
+
+# Switch namespaces
+
+kubectl config set-context $(kubectl config current-context) --namespace=dev
+
+# Create deployment in namespace dev
+
+apiVersion: v1
+kind: Deployment
+metadata:
+  name: myapp-deloyment
+  namespace: dev
+  labels: 
+    app: myapp
+    type: front-end
+    ...
