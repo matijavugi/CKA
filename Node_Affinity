@@ -1,0 +1,35 @@
+# Node Affinity
+
+# Ensure that pods are scheduled on to the right nodes
+
+# Operators can be different (In, NotIn, Exists, ...)
+
+# Two types of Node Affinity:
+- requiredDuringSchedulingIgnoredDuringExecution   (does not schedule pod if the pod doesn't match expressions)
+- preferredDuringSchedulingIgnoredDuringExecution  (if node doesn't match expressions it will be scheduled on some node)
+
+
+apiVersion: 
+kind: Pod
+metadata:
+  name: myapp-pod
+spec:
+  containers:
+  - name: data-processor
+    image: data-processor
+
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: size
+            operator: In       
+            values:
+            - large
+            - medium
+
+  
+					
+
+
