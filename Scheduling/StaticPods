@@ -1,0 +1,14 @@
+# Static Pods
+
+# use case: deploy controlplane components (apiserver, etcd, controller-manager)
+
+# you can place pod configs yaml to specified directory inside kubelet.service file
+
+# kubelet works on the pod level
+# looks at --pod-manifest-path for the location of the pods.yml files in the kubelet.service file
+# another way is to put in kubelet.service --config=kubeconfig.yaml
+# in the kubeconfig.yaml: staticPodPath: /etc/kubernetes/manifest/
+
+# example: /etc/kubernetes/manifests/pod1.yaml
+
+docker ps - to check for running containers
