@@ -1,0 +1,46 @@
+# Labels and Selectors
+
+# Selector filters labels 
+
+#pod-definition.yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+  labels:
+    name: nginx
+    app: App1
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+    ports:
+      - containerPort: 8080
+  nodeName: node02    //can't be edited once pod created
+
+kubectl get pods --selector app=App1
+
+
+# replicaset-definition.yml
+apiVersion: v1
+kind: ReplicaSet
+metadata:
+  name: simple-web
+  labels:                       / label of the replicaset
+    function: front-end    
+    app: App1
+spec:
+  replicas: 3
+  selector: 
+    matchLabels:               / matches app: App1 of the Pod label, mentioned bellow
+      app: App1
+  template:
+    metadata:
+      labels:                  / label of the Pods
+        app: App1
+        function: front-end
+    spec:
+      containers:
+      - name: simple-webapp
+        image: simple-webapp
+
