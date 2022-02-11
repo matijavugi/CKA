@@ -2,7 +2,9 @@
 
 # Selector filters labels 
 
+
 #pod-definition.yml
+
 apiVersion: v1
 kind: Pod
 metadata:
@@ -10,6 +12,7 @@ metadata:
   labels:
     name: nginx
     app: App1
+
 spec:
   containers:
   - name: nginx
@@ -20,8 +23,11 @@ spec:
 
 kubectl get pods --selector app=App1
 
+kubectl get pods --selector env=prod,bu=finance,tier=frontend
+
 
 # replicaset-definition.yml
+
 apiVersion: v1
 kind: ReplicaSet
 metadata:
