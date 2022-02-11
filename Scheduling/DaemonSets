@@ -1,0 +1,24 @@
+# DaemonSets
+
+# It ensures that one copy of the pod is always deployed on each node in the cluser
+# if the node goes done, pod doesn't get redeployed to another node, it goes down with node
+
+# Use cases: monitoring agents, networking(Weave-net requires agent on each node)
+
+
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: monitoring-daemon
+spec:
+  selector:
+    matchLabels:
+      app: monitoring-agent
+  template:
+    metadata:
+      labels:
+        app: monitoring-agent
+    spec:
+      containers:
+      - name: monitoring-agent
+        image: monitoring-agent
