@@ -1,0 +1,17 @@
+# Resource Requirements and Limits
+
+apiVersion: 
+kind: Pod
+metadata:
+  name: myapp-pod
+spec:
+  containers:
+  - name: data-processor
+    image: data-processor
+    resources:
+      requests:
+        memory: "1Gi"
+        cpu: 1
+      limits:
+        memory: "2Gi"		/ if above memory limits, container gets terminated
+        cpu: 2			/ if above cpu limits, container get throttled 
