@@ -11,6 +11,10 @@ kubectl taint nodes node-name key=value:taint-effect
 
 kubectl taint nodes node1 app=blue:NoSchedule
 
+# Remove taint
+
+kubectl taint nodes node1 app=blue:NoSchedule-
+
 
 ## Tolerations
 
@@ -28,6 +32,3 @@ spec:
     operator: "Equal"
     value: "blue"
     effect: "NoSchedule"
-					
-
-
