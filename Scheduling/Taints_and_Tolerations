@@ -1,0 +1,33 @@
+# Taints and Tolerations
+
+# Taints are set on Nodes while Tolerations are set on Pods
+
+kubectl taint nodes node-name key=value:taint-effect
+                                           |
+                                            What happens to PODs that DO NOT TOLERATE this taint:
+						- NoSchedule - Pod won't be scheduled on that node
+					        - PreferNoSchedule - No guarantee that Pod won't be scheduled on that node
+                                                   - NoExecute - New Pods won't be scheduled, existing Pods that can't handle taint will be evicted
+
+kubectl taint nodes node1 app=blue:NoSchedule
+
+
+## Tolerations
+
+apiVersion: 
+kind: Pod
+metadata:
+  name: myapp-pod
+spec:
+  containers:
+  - name: nginx-container
+    image: nginx
+
+  tolerations:
+  - key: "app"
+    operator: "Equal"
+    value: "blue"
+    effect: "NoSchedule"
+					
+
+
