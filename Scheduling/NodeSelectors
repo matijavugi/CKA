@@ -1,0 +1,23 @@
+# Node Selectors
+
+# First you need to add label to the node and then create a pod with nodeSelector
+# Node affinity is more rounded solution
+
+kubectl label node node01 size=Large
+
+
+
+apiVersion: 
+kind: Pod
+metadata:
+  name: myapp-pod
+spec:
+  containers:
+  - name: data-processor
+    image: data-processor
+
+  nodeSelector:
+    size: Large
+
+  
+				
