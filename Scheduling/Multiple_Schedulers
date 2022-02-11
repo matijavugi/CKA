@@ -1,0 +1,47 @@
+# Multiple Schedulers
+
+# download kube-scheduler binary
+# or make a copy of /etc/kubernetes/manifests/kube-scheduler.yaml
+
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-custom-scheduler
+spec:
+  containers:
+  - command:
+    ...
+    - --scheduler-name=my-custom-scheduler          / rename custom scheduler
+    - --leader-elect=false 
+       # OR
+    - --lock-object-name=my-custom-scheduler       / one or another is needed for different schedulers to work
+
+
+kubectl get pods --namespace=kube-system
+
+# to enable pod and use of new scheduler
+
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-custom-scheduler
+spec:
+  containers:
+  - name: nginx
+    name: nginx
+
+  schedulerName: my-custom-scheduler
+
+kubectl create -f pod-definition.yaml
+
+
+# view events
+
+kubectl get events     / look for scheduled events
+
+# view logs
+
+kubectl logs my-custom-scheduler --name-space=kube-system
+
