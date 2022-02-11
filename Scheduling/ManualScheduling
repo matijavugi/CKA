@@ -1,0 +1,37 @@
+# Manual Scheduling
+
+#pod-definition.yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+  labels:
+    name: nginx
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+    ports:
+      - containerPort: 8080
+  nodeName: node02    //can't be edited once pod created
+
+... to overcome node assignment once pod is created... just delete the pod and change nodeName properties! 
+
+This bellow doesn't seem like faster or better way of doing things. 
+
+#pod-bind-definition.yml
+apiVersion: v1
+kind: Binding
+metadata:
+  name: nginx
+target:
+  apiVersion: v1
+  kind: Node
+  name: node02
+
+you need to push it manually using API
+
+curl --header "Content-Type:application/json" --request POST --data '{"apiVersion":"v1", "kind":"Binding", ... "name":"node02"}' http://$SERVER/api/v1/namespace/default/pods/$PODNAME/binding
+
+curl --header "Content-Type:application/json" --request POST --data '{"apiVersion":"v1","kind":"Pod","metadata":{"annotations":{},"name":"nginx","namespace":"default"},"spec":{"containers":[{"image":"nginx","name":"nginx"}],"nodeName":"controlplane"}}' http://10.31.195.3/api/v1/namespace/default/pods/nginx/binding
+
