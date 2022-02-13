@@ -1,0 +1,34 @@
+#Rollout
+
+kubectl rollout status deployment/<deployment-name>
+
+kubectl rollout history deployment/<deployment-name>
+
+# Deployment Strategy
+- Recreate
+    - downtime
+strategy:
+    type: Recreate
+
+- Rolling Update
+    - pod by pod, no downtime (default)
+
+strategy:
+    type: RollingUpdate
+     rollingUpdate:
+      maxSurge: 3
+      maxUnavailable: 1
+      timeoutSeconds: 100
+      intervalSeconds: 5
+      updatePeriodSeconds: 5
+
+# How to rollout
+kubectl apply deployment-definition.yml
+# or
+kubectl set image deployment/myapp-deployment nginx=nginx:1.9.1
+
+# Rollback
+kubectl rollout undo deployment/<deployment-name>
+kubectl get replicaset #to check replicaset status
+
+

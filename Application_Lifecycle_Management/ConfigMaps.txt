@@ -1,0 +1,45 @@
+# ConfigMaps
+# used to pass data in key-value pairs
+1. Create ConfigMap
+2. Insert it to pod
+
+kubectl create configmap app-config --from-literal=APP_COLOR=blue
+# OR read values from the file
+kubectl create configmap app-config --from-file=app_config.properties
+# OR use declarative way
+
+config-map.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+data:
+  APP_COLOR: blue
+  APP_MODE: prod
+
+kubectl create -f config-map.yaml
+
+kubectl get configmap
+kubectl describe configmap
+
+# Insert it to pod, all values
+
+envFrom:
+  - configMapRef:
+      name: app-config
+
+# Insert it to pod, only some values
+
+env:
+  - name: APP_COLOR
+    valueFrom:
+      configMapKeyRef:
+        name: app-config
+        key: APP_COLOR
+
+# Insert it to pod as volume
+
+volumes:
+- name: app-config-volume
+  configMap:
+    name: app-config
