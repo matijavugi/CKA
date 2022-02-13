@@ -1,0 +1,9 @@
+# Application logs
+
+docker logs -f <container_name>
+
+kubectl logs -f <pod_name>
+
+#if pod has multiple containers
+kubectl logs -f <pod_name> <container_name>
+

@@ -1,0 +1,8 @@
+# Monitor
+
+# Metrics server addon downloadable via k8s site
+# git clone https://github.com/kodekloudhub/kubernetes-metrics-server.git
+
+kubectl top node
+
+kubectl top pod
