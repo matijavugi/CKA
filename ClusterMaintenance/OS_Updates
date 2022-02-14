@@ -1,0 +1,12 @@
+# Eviction setting in kube-controller-manger, default is 5 minutes
+
+kube-controller-manager --pod-eviction-timeout=5m
+
+# Draining the node, pods get gracefully shut 
+kubectl drain node-1
+
+# Make node scheduleable agin 
+kubectl uncordon node-1
+
+# Make node unscheduleable
+kubectl cordon node-2
