@@ -1,0 +1,48 @@
+#Backup Candidates
+
+- Resource Configuration
+	- backup to git
+	- # OR
+	- query API server 
+		- kubectl get all --all-namespaces -o yaml > all-deploy-services.yaml
+
+		
+- Persistant Storage
+
+- ETCD Cluster
+	- backup tool can backup --data-dir specified in the etcd.service
+	- built in snapshot
+
+# Take a snapshot with mandatory options
+
+export ETCDCTL_API=3
+
+etcdctl snapshot save snapshot.db \
+--endpoints=https://127.0.0.1:2379 \
+--cacert=/etc/etcd/ca.crt \
+--cert=/etc/etcd/etcd-server.crt \
+--key=/etc/etcd/etcd-server.key
+
+# Get snapshot status
+
+etcdcl snapshot status snapshot.db
+
+# Restore snapshot
+
+# First, stop api server
+service kube-apiserver stop
+
+# Run restore command
+ etcdctl snapshot restore snapshot.db --data-dir /var/lib/etcd-from-backup
+
+# Change etcd.service --data-dir location
+--data-dir=/var/lib/etcd-from-backup
+
+service daemon-reload
+
+service etcd restart
+
+service kube-apiserver restart
+
+
+
