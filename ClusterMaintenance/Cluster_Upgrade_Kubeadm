@@ -1,0 +1,46 @@
+# Cluster Upgrade
+
+# via Kubeadm
+
+kubeadm upgrade plan
+
+kubeadm upgrade apply
+
+# Proper way to upgrade
+
+1. upgrade Master
+
+2. upgrade Worker
+
+
+# Step by step via kubeadm
+
+# Gives you information how to upgrade the cluster
+kubeadm upgrade plan 
+
+# kubeadm goes first, as said in the plan above
+apt-get upgrade -y kubeadm=1.12.0-00
+
+kubeadm upgrade apply v1.12.0
+
+# upgrade kubelets
+
+apt get upgrade kubelet=1.12.0-00
+
+systemctl restart kubelet
+
+kubectl get nodes / shows upgraded nodes
+
+# on worker nodes:
+
+kubectl drain node-1
+
+apt-get upgrade -y kubeadm=1.12.0-00
+
+apt get upgrade kubelet=1.12.0-00
+
+kubeadm upgrade node config --kubelet-version v1.12.0
+
+systemctl restart kubelet
+
+kubectl uncordon node-1
