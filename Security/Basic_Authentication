@@ -1,0 +1,44 @@
+
+!!!! Depricated in k8s v.1.19 and above
+
+# Authentication 
+# All user access is managed by kube-apiserver
+
+# Static Password file 
+
+user-detail.csv
+passowrd,user,user-id,group1(optional)
+
+# Import that csv file to kube-apiserver.service
+--basic-auth-file=user-detail.csv
+
+# OR
+
+# in Kubeadm installation
+# change kube-apiserver.yml located in /etc/kubernetes/manifests/kube-apiserver.yaml
+
+- --basic-auth-file=user-detail.csv
+
+
+# to authenticate user
+
+curl -v -k https://master-node-ip:6443/api/v1/pods -u "user1:password123"
+
+
+# Static Token File
+
+user-detail.csv
+k523kfdfsetgergs,user1,uid001,group1(optional)
+
+# import token csv file same as password file
+
+# to authenticate user via token
+
+
+curl -v -k https://master-node-ip:6443/api/v1/pods --header "Authorization: Bearer k523kfdfsetgergs "
+
+
+#### This is not recommended approach
+#### Consider volume mount while providing the auth file in a kubeadm setup
+#### Setup Role Based Authorization for the new users
+
