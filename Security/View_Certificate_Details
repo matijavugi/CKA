@@ -1,0 +1,36 @@
+# View certificates in the existing cluster
+
+# First thing to know is how the cluster was deployed, kubeadm or 'The Hard Way' using binaries
+# Kubeadm automates installation and it has certificates is well known place while manual cluster installer can have certificates
+# in different location, but they must be specified in the component service (kube-apiserver.service, ...)
+
+
+# Cluster created by kubeadm
+
+# most likely location of the file, can be different, but then it's specified in the /etc/kubernetes/manifest/apiserver.yaml
+
+/etc/kubernetes/pki/apiserver.crt
+
+# check cert content
+openssl x509 -in /etc/kubernetes/pki/apiserver.crt -text -noout
+
+
+# Troubleshooting issues
+
+# Manually built cluster
+journalctl -u etcd.service -l
+
+# kubeadm built cluster
+kubectl logs etcd-master
+
+# View logs
+docker ps -a
+docker logs container_id
+
+# Things to look if something is wrong with certificates
+
+Subject: CN=kube-apiserver 	//check name of the component
+x509v3 Subject Alternative Name: 	// check if it has all alternative names it should have
+
+check validity
+check issuer, it should be CA who issued the certificate
