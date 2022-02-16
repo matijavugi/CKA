@@ -1,0 +1,133 @@
+# TLS in Kubernetes
+
+## Server components using certificates
+
+# Kube-api server (client to etcd server)
+# etcd server
+# Kubelet server
+
+## Client components using certificates
+
+# Admin user
+# kube-scheduler
+# kube-controller-manager
+# kube-proxy
+
+
+#### CA certificates ####
+
+# Private Key
+openssl genrsa -out ca.key 2048
+> ca.key
+
+# CSR
+openssl req -new -key ca.key -subj "CN=KUBERNETES-CA" -out ca.csr
+> ca.csr
+
+# Now we need to self sign CA certificate
+openssl x509 -req -in ca.csr -signkey ca.key -out ca.crt
+> ca.crt
+
+---------------------------------------------------------
+
+### - Client certificates - ###
+
+## [ Admin user ] ##
+
+# Private Key
+openssl genrsa -out admin.key 2048
+> admin.key
+
+# CSR
+openssl req -new -key admin.key -subj "/CN=kube-admin/O=system:masters" -out admin.csr
+> admin.csr
+- CN field is important, it will be the admin name
+- system:masters in kubernetes group that will allow kube-admin to become admin, it must be on the certificate
+
+# CA signed
+openssl x509 -req -in admin.csr -CA ca.crt -CAkey ca.key -out admin.crt
+> admin.crt
+
+## To check if the key is working
+curl https://kube-apiserver:6443/api/v1/pods \
+-- key admin.key --cert admin.crt --cacert ca.crt
+
+
+## [ Kube-scheduler, Kube-controller-manager, kube-proxy their names must have system: prefix ] ##
+
+
+### - Server side certificates - ###
+
+# [ ETCD server ] #
+- same as other
+
+# [ API Server ] #
+
+- it has many names, so it needs additional configuration
+
+# Private Key
+openssl genrsa -out apiserver.key 2048
+> apiserver.key
+
+# CSR with all alternating names, we need openssl config file
+openssl req -new -key apiserver.key -subj "/CN=kube-apiserver" -out apiserver.csr -config openssl.cnf
+> apiserver.csr
+
+openssl.cnf
+[ req ]
+req_extensions = v3_req
+distinguished_name = req_distinguised_name
+[ v3_req ]
+basicConstraints = CA:FALSE
+keyUsage = nonRepudiation,
+subjectAltName = @alt_names
+[ alt_names]
+DNS.1 = kubernetes
+DNS.2 = kubernetes.default
+DNS.3 = kubernetes.default.svc
+DNS.4 = kubernetes.default.svc.cluster.local
+IP.1 = 10.96.0.1
+IP.2 = 172.17.0.87
+
+# CA signed CSR
+openssl x509 -req -in apiserver.csr -CA ca.crt -CAkey ca.key -out apiserver.crt
+
+- above created is for a server, but kube-api talks to etcd and kublet as client as well
+- so we need to create client certs as well;
+	- apiserver-kubelet-client.crt
+	- apiserver-kubelet-client.key
+	- apiserver-etcd-client.crt
+	- apiserver-etcd-client.key
+
+- all this certification needs to specified in the apiserver config file;
+	-- client-ca-file=/var/lib/kubernetes/ca.pem	// every component needs this line
+-----------------------
+	-- tls-cert-file=.../apiserver.crt		// apiserver server certificate
+	-- tls-private-key-file=.../apiserver.key		// same as above
+-----------------------
+	-- etcd-cafile=.../ca.pem				
+	-- etcd-certfile=../apiserver-etcd-client.crt	// apiserver to etcd client cert
+	-- etcd-keyfile=../apiserver-etcd-client.key
+-----------------------
+	-- kubelet-certificate-authority=../ca.pem
+	-- kubelet-client-certificate=../apiserver-kubelet-client.crt	// apiserver to kubelet client cert
+	-- kubelet-client-key=../apiserver-kubelet-client.key
+
+# [ Kubelet Server Cert] #
+
+- runs on each node
+- each node needs cert pair
+- certificates named after nodes (node01, node02, node03)
+- once certs are created, they need to be specified in the kubelet-config.yaml on the each node;
+	clientCAFile: "../ca.pem"
+	tlsCertFile: "../kubelet-node01.crt"
+	tlsPrivateKeyFile: "../kubelet-node01.key"
+
+# [ Kubelet Client Cert ] #
+
+- kubelet communicates to kube-api server and it needs client certificates
+- api server needs to know which node is it talking to
+- certificates are named with prefix system:node;
+	- system:node:node01
+	- system:node:node02
+- nodes need to be in the system:nodes group, hence the prefix
