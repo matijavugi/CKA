@@ -1,0 +1,48 @@
+# Certificates API
+
+# Step by step process for adding new kubernetes admin
+
+# New admin creates private key and CSR
+
+openssl genrsa -out jane.key 2048
+> jane.key
+
+openssl req -new -key jane.key -subj "/CN=jane" -out jane.csr
+> jane.csr
+
+# Admin takes that CSR and creates Certificate Signing Request Object like so:
+jane-csr.yaml
+
+apiVersion: certificates.k8s.io/v1beta1
+kind: CertificateSigningRequest
+metadata:
+  name: jane
+spec:
+  groups:		// to which group new admin belongs
+  - system:authenticated
+  usages:
+  - digital signature
+  - key encipherment
+  - server auth
+  request:		// request must be new-admin's CSR but encoded in base64
+			// cat jane.csr | base64
+
+kubectl apply -f jane-csr.yaml
+
+kubect get csr		// to view the Certificate Signing Request
+
+kubectl certificate approve jane	// approve jane's certificate
+
+kubectl get csr jane -o yaml	// open signed csr in yaml format
+				// copy certificate: content
+				// extract it by decoding it in base64
+				// echo "<copied content>" | base64 --decode
+				// share decoded certificate with new-admin
+
+# Controller manager component is responsible for all Certificate related operations
+# it has CSR-Approving and CSR-Signing 
+# in the config file of the kube-controller-manager:
+# - --cluster-signing-cert-file=.../ca.crt
+# - --cluster-signing-key-file=.../ca.key
+
+ 
