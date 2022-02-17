@@ -1,0 +1,55 @@
+# RBAC
+
+# Create Role first
+
+developer-role.yaml
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: developer
+rules:
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["list", "get", "create", "update", "delete"]
+
+- apiGroups: [""]
+  resources: ["ConfigMaps"]
+  verbs: ["create"]
+  resourceNames: ["blue-pod"]	// restrict role only to blue-pod pod, this is optional
+kubectl create -f developer-role.yaml
+
+
+# Create Role Binding after to bind users to the Role
+
+devuser-developer-binding.yaml
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: devuser-developer-binding
+subjects:
+- kind: User
+  name: dev-user
+  apiGroup: rbac.authorization.k8s.io
+
+roleRef:
+  kind: Role
+  name: developer
+  apiGroup: rbac.authorization.k8s.io
+
+kubectl create -f devuser-developer-binding.yaml
+
+
+kubectl get roles
+
+kubectl get rolebindings
+
+kubectl describe role developer
+
+
+# Check if you have access
+
+kubectl auth can-i create deployments
+
+kubectl auth can-i delete nodes --as dev-user --namespace=kube-system
