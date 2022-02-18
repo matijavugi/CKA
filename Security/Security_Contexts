@@ -1,0 +1,19 @@
+# Security Contexts
+
+# Security contexts inside container specification will override security contexts of the pod
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: web-pod
+spec:
+  securityContext:		// specified for the entire pod, for all containers
+    runAsUser: 1000
+  containers:
+    - name: ubuntu
+      image: ubuntu
+      command: ["sleep", "3600"]
+      securityContext:
+        runAsUser: 1001		// this will override pods security context
+        capabilities:
+          add: ["MAC_ADMIN"]	// capabilities are only supported at the container level
