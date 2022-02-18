@@ -1,0 +1,85 @@
+# Network Policy
+
+# Ingress - traffic from user to frontend (web application)
+# Egress  - traffic from frontend to backend (web app to backend API)
+
+# web app
+ingress on port 80   / from client
+egress on port 5000  / to backend api
+
+# backend api
+ingress on port 5000 / from web app
+--
+egress on port 3306  / to database
+
+# database
+ingress on port 3306 / from backend api
+
+
+# network policies are linked to pods
+
+## Allow only ingress traffic for pod db from pod api-pod on port 3306
+
+policy-definition.yaml
+
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: db-policy
+spec:
+  podSelector:		// select to which pod this rule applies
+    matchLabels:
+      role: db
+  policyTypes:		// which policy type, Ingress or Egress
+  - Ingress
+  - Egress		// if pod is sending data
+  ingress:
+  - from:
+    - podSelector:	// from which pod traffic will be allowed
+        matchLabels:
+          name: api-pod
+      namespaceSelector:	//(optional) if there are multiple api-pods but we want only pod from prod namespace
+        matchLabels:
+          name: prod 
+    - ipBlock:
+        cidr: 192.168.5.10/32  //(optional) maybe there is a backup server that is not par of the k8s cluster, we can specify IP range
+    ports:
+    - protocol: TCP
+      port: 3306
+  egress:
+  - to:
+    - ipBlock:
+        cidr: 192.168.5.10/32
+    ports:
+    - protocol: TCP
+      port: 80
+
+
+kubectl create -f policy-definition.yaml
+
+
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+        name: internal-policy
+spec:
+        podSelector:
+                matchLabels:
+                  name: internal
+        policyTypes:
+        - Egress
+        egress:
+        - to:
+          - podSelector:
+              matchLabels:
+                name: payroll
+          ports:
+            - protocol: TCP
+              port: 8080
+        - to:
+          - podSelector:
+              matchLabels:
+                name: mysql
+          ports:
+            - protocol: TCP
+              port: 3306
