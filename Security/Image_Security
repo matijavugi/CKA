@@ -1,1 +1,18 @@
+# Image Security
 
+# Create docker-registry secret 
+
+kubectl create secret docker-registry secret-registry-name \
+  --docker-server=<server-hostname>                 \
+  --docker-username=<registry-username>             \
+  --docker-password=<registry-password>             \
+  --docker-email=<registry-user@gmail.com>
+
+# Add secret to Pod definition
+...
+spec:
+  containers:
+  - name: nginx
+    image: private-registry.io/apps/nginx-app
+  imagePullSecrets:
+  - secret-registry-name
