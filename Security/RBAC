@@ -1,5 +1,7 @@
 # RBAC
 
+## Namespace Scoped ##
+
 # Create Role first
 
 developer-role.yaml
