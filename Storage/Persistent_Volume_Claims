@@ -1,0 +1,29 @@
+# Persistent Volume Claims
+
+# one to one relationships between PV and PVC
+
+pvc-definition.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+ name: myclaim
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 500Mi
+
+kubectl create -f pvc-definition.yaml
+
+kubectl get pvc
+
+# check the status, if PVC finds suitable PV, status will be bound
+
+kubectl delete pvc myclaim
+
+# Once PVC gets deleted and if not defined otherwise, PV won't be available for other PVC's until manually deleted
+# by the admin
+# This is due to persistantVolumeReclaimPolicy config which by default is set to Retain
+# Other policies are Delete, which deletes PV and frees up storage
+# Recycle policy will delete the data from PV and will make PV available to other PVC's
