@@ -1,0 +1,28 @@
+# Storage Classes
+
+# Storage Classes make dynamic provisioning of the storage possible
+
+sc-definition.yaml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: google-storage
+provisioner: kubernetes.io/gce-pd   // there can be many provisioners like GCP, Azure, AWS, ...
+
+kubectl create -f sc-definition.yaml
+
+pvc-definition.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: myclaim
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: google-storage
+  resources:
+    requests:
+      storage: 500Mi
+
+# This way we can dynamically provision storage from Google, there is no need for creating additional PV
+
