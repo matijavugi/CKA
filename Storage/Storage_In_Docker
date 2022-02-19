@@ -1,0 +1,22 @@
+## Storage in Docker - Storage Drivers
+
+# File system
+/var/lib/docker
+ /containers
+ /image
+ /volumes
+ ...
+
+# Layered architecture
+# image layers
+
+# It uses storage drivers, such as AUFS, ZFS, BTRFS, Device Mapper, Overlay, Overlay2
+
+## Volume Drivers
+
+# Local, GlusterFS, Azure File Storage, VMware vSphere, ...
+
+--volume-driver rexray/ebs
+
+
+
