@@ -1,2 +1,25 @@
 # Persistent Volumes
 
+# Access Modes
+- ReadOnlyMany
+- ReadWriteOnce
+- ReadWriteMany
+
+pv-definition.yaml
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-vol1
+spec:
+  accessModes:
+    - ReadWriteOnce
+  capacity:
+    storage: 1Gi
+  hostPath:         // can be AWS, Azure, or other types of storage
+    path: /tmp/data
+
+kubectl create -f pv-definition.yaml
+
+kubectl get pv
+
