@@ -1,0 +1,15 @@
+# Cluster Networking
+
+# Port required to be opened 
+
+# Master
+- Kube-api                - 6443
+- Kubelet                 - 10250
+- Kube-scheduler          - 10251
+- Kube-controller-manager - 10252
+- etcd                    - 2379 
+- etcd multi master       - 2380	
+
+# Worker
+- Kubelet                 - 10250
+- Services                - 30000 - 32767
