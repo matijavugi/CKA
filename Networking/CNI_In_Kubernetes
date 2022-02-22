@@ -1,0 +1,17 @@
+# CNI in Kubernetes
+
+# CNI plugin is configured in the kubelet.service 
+
+--network-plugin=cni
+--cni-bin-dir=/opt/cni/bin
+--cni-conf-dir=/etc/cni/net.d
+
+# OR 
+ps -aux |grep kubelet
+
+ls -l /opt/cni/bin
+
+ls -l /etc/cni/net.d/
+> 10-bridge.conf
+
+
