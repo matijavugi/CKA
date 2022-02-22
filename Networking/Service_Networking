@@ -1,0 +1,12 @@
+# Service Networking
+
+kube-api-server --service-cluster-ip-range ipNet (10.0.0.0/24)
+
+ps aux | grep kube-apiserver
+
+iptables -L -t nat | grep db-service
+
+# check proxy
+cat /var/log/kube-proxy.log
+
+# mind the verbosity level
