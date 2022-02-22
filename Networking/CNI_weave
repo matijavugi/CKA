@@ -1,0 +1,12 @@
+# CNI weave
+
+# Can be deployed as service
+# Can as well be deployed in pods after Kubernetes is instantiated 
+
+kubectl apply -f "http://cloud.weave.works...$(kubectl version | base64 | tr -d '\n')"
+
+# It deploys weave as deamon-set which means it gets deployed to all nodes
+
+kubectl get pods -n kube-system
+
+kubectl logs weave-net-dsadas -n kube-system
