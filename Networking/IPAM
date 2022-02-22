@@ -1,0 +1,13 @@
+# IPAM (IP Adress Management)
+
+cat /etc/cni/net.d/net-script.conf
+
+ipam:
+  type: host-local
+  subnet:
+  routes:
+    ...
+
+# Different network provides, have different implementation 
+
+
