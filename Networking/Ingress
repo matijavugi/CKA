@@ -1,0 +1,136 @@
+# Ingress
+
+## Ingress controller ##
+
+# must be deployed (nginx, GCE, haproxy,...)
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: nginx-ingress-controller
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: nginx-ingress
+  template:
+    metadata:
+      labels:
+        name: nginx-ingress
+    spec:
+      containers:
+        - name: nginx-ingress-controller
+          image: quay.io/kubernetes-ingress-controller/nginx-ingress-controller:0.21.0
+      args:
+        - /nginx-ingress-controller			// Starting nginx
+        - --configmap=$(POD_NAMESPACE)/nginx-configuration	// For easier configuration outside the image
+      env:
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+      ports:
+        - name: http
+          containerPort: 80
+        - name: https
+          containerPort: 443
+
+nginx-configmap.yaml
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-configuration
+...
+
+nginx-service.yaml
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-ingress
+spec:
+  type: NodePort
+  selector:
+    name: nginx-ingress
+  ports:
+  - port: 80
+    targetPort: 80
+    protocol: TCP
+    name: http
+  - port: 443
+    targetPort: 443
+    protocol: TCP
+    name: https
+
+
+nginx-ingress-serviceaccount.yaml
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: nginx-ingress-serviceaccount
+// Roles, ClusterRoles, RoleBindings
+
+# In short, for simplest form Ingress Controller, we need:
+# deployment, service which it maps, ConfigMap and Authentication in form of ServiceAccounts
+
+--------------
+
+## Ingress Resource ##
+
+ingress-wear-watch.yaml
+
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ingress-wear-watch
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /wear
+        backend:
+          serviceName: wear-service
+          servicePort: 80
+      - path: /watch
+        backend:
+          serviceName: watch-service
+          servicePort: 80
+
+kubectl create -f ingress-wear-watch.yaml
+
+# This kind of ingress will redirect traffic such as:
+www.my-online-store.com/wear
+# OR
+www.my-online-store.com/watch
+
+# There is a different redirect type, based on host redirection:
+
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ingress-wear-watch
+spec:
+  rules:
+  - host: wear.my-online-store.com
+    http:
+      paths:
+      - backend:
+          serviceName: wear-service
+          servicePort: 80
+  - host: watch.my-online-store.com
+    http:
+      paths:
+      - backend:
+          serviceName: watch-service
+          servicePort: 80
+
+# This kind of ingress resource will redirect traffic;
+www.wear.my-online-store.com
+# OR
+www.watch.my-online-store.com
