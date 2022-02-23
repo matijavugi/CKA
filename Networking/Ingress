@@ -85,7 +85,7 @@ metadata:
 
 ingress-wear-watch.yaml
 
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: ingress-wear-watch
@@ -94,13 +94,17 @@ spec:
   - http:
       paths:
       - path: /wear
+        pathType: Prefix
         backend:
-          serviceName: wear-service
-          servicePort: 80
+          service
+            name: wear-service
+            port: 80
       - path: /watch
+        pathType: Prefix
         backend:
-          serviceName: watch-service
-          servicePort: 80
+          service
+            name: watch-service
+            port: 80
 
 kubectl create -f ingress-wear-watch.yaml
 
@@ -111,7 +115,7 @@ www.my-online-store.com/watch
 
 # There is a different redirect type, based on host redirection:
 
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: ingress-wear-watch
@@ -121,14 +125,16 @@ spec:
     http:
       paths:
       - backend:
-          serviceName: wear-service
-          servicePort: 80
+          service
+            name: wear-service
+            port: 80
   - host: watch.my-online-store.com
     http:
       paths:
       - backend:
-          serviceName: watch-service
-          servicePort: 80
+          service
+            name: watch-service
+            port: 80
 
 # This kind of ingress resource will redirect traffic;
 www.wear.my-online-store.com
