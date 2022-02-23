@@ -96,15 +96,17 @@ spec:
       - path: /wear
         pathType: Prefix
         backend:
-          service
+          service:
             name: wear-service
-            port: 80
+            port: 
+              number: 80
       - path: /watch
         pathType: Prefix
         backend:
-          service
+          service:
             name: watch-service
-            port: 80
+            port: 
+              number: 80
 
 kubectl create -f ingress-wear-watch.yaml
 
@@ -125,16 +127,18 @@ spec:
     http:
       paths:
       - backend:
-          service
+          service:
             name: wear-service
-            port: 80
+            port: 
+              number: 80
   - host: watch.my-online-store.com
     http:
       paths:
       - backend:
-          service
+          service:
             name: watch-service
-            port: 80
+            port: 
+              number: 80
 
 # This kind of ingress resource will redirect traffic;
 www.wear.my-online-store.com
