@@ -1,0 +1,33 @@
+# Installing Kubernetes Cluster via Kubeadm
+
+# Installing Kubeadm and Kubelet on Control Node and Worker node
+
+sudo apt-get update
+sudo apt-get install -y apt-transport-https ca-certificates curl
+
+sudo curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
+
+echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+
+apt list -a kubeadm
+
+# In case of specific version
+sudo apt-get install kubelet=1.21.0-00 kubeadm=1.21.0-00 kubectl=1.21.0-00
+
+# Initialise cluster on control plane
+
+kubeadm init --apiserver-advertise-address=10.35.35.9 --apiserver-cert-extra-sans=controlplane --pod-network-cidr=10.244.0.0/16
+
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+# Add worker node to the cluster  
+
+kubeadm join 10.35.35.9:6443 --token 43qa8t.9iibf3x9wp1jbjc3 \
+        --discovery-token-ca-cert-hash sha256:5a98da020e35cb0fef5c7577507decbb70189de0be69bc30271961989621edca
+
+# Installing pod network (weave net)
+
+kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
+
