@@ -1,0 +1,13 @@
+curl http://name:port
+
+kubectl describe svc 
+
+kubectl get pod
+
+kubectl describe pod 
+
+kubectl logs -f --previous pod_name
+
+# --previous check logs for pod before current one
+
+- check labels, ports, environment variables, ... 
